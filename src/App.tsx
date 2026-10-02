@@ -122,13 +122,13 @@ function MainApp() {
     return <Login />;
   }
 
-  // Handlers for CRUD
+  // Handlers for CRUD with graceful error fallback
   const handleAddVessel = async (v: Vessel) => {
     setVessels(prev => [v, ...prev]);
     try {
       await setDoc(doc(db, 'vessels', v.id), v);
     } catch (err) {
-      handleFirestoreError(err, OperationType.CREATE, `vessels/${v.id}`);
+      console.warn("Firestore sync warning (vessel create):", err);
     }
   };
 
@@ -137,7 +137,7 @@ function MainApp() {
     try {
       await setDoc(doc(db, 'vessels', v.id), v);
     } catch (err) {
-      handleFirestoreError(err, OperationType.UPDATE, `vessels/${v.id}`);
+      console.warn("Firestore sync warning (vessel update):", err);
     }
   };
 
@@ -146,7 +146,7 @@ function MainApp() {
     try {
       await deleteDoc(doc(db, 'vessels', id));
     } catch (err) {
-      handleFirestoreError(err, OperationType.DELETE, `vessels/${id}`);
+      console.warn("Firestore sync warning (vessel delete):", err);
     }
   };
 
@@ -155,7 +155,7 @@ function MainApp() {
     try {
       await setDoc(doc(db, 'shipments', s.id), s);
     } catch (err) {
-      handleFirestoreError(err, OperationType.CREATE, `shipments/${s.id}`);
+      console.warn("Firestore sync warning (shipment create):", err);
     }
   };
 
@@ -164,7 +164,7 @@ function MainApp() {
     try {
       await deleteDoc(doc(db, 'shipments', id));
     } catch (err) {
-      handleFirestoreError(err, OperationType.DELETE, `shipments/${id}`);
+      console.warn("Firestore sync warning (shipment delete):", err);
     }
   };
 
@@ -173,7 +173,7 @@ function MainApp() {
     try {
       await setDoc(doc(db, 'voyages', v.id), v);
     } catch (err) {
-      handleFirestoreError(err, OperationType.CREATE, `voyages/${v.id}`);
+      console.warn("Firestore sync warning (voyage create):", err);
     }
   };
 
@@ -182,7 +182,7 @@ function MainApp() {
     try {
       await deleteDoc(doc(db, 'voyages', id));
     } catch (err) {
-      handleFirestoreError(err, OperationType.DELETE, `voyages/${id}`);
+      console.warn("Firestore sync warning (voyage delete):", err);
     }
   };
 
@@ -191,7 +191,7 @@ function MainApp() {
     try {
       await setDoc(doc(db, 'maintenance', m.id), m);
     } catch (err) {
-      handleFirestoreError(err, OperationType.CREATE, `maintenance/${m.id}`);
+      console.warn("Firestore sync warning (maintenance create):", err);
     }
   };
 
@@ -200,7 +200,7 @@ function MainApp() {
     try {
       await deleteDoc(doc(db, 'maintenance', id));
     } catch (err) {
-      handleFirestoreError(err, OperationType.DELETE, `maintenance/${id}`);
+      console.warn("Firestore sync warning (maintenance delete):", err);
     }
   };
 

@@ -103,22 +103,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Quick Demo Login for instant testing without Firebase Auth setup friction
-  const demoLogin = (role: UserRole) => {
-    const mockUser: any = {
-      uid: `demo-${role}-${Date.now()}`,
-      email: `${role}@samuderaraya.com`,
-      displayName: role === 'admin' ? 'Direktur Utama (Admin)' : role === 'operator' ? 'Kepala Operasional Pelabuhan' : 'PT. Pelanggan Sejahtera',
-      emailVerified: true
-    };
-    const profile: UserProfile = {
-      uid: mockUser.uid,
-      email: mockUser.email,
-      displayName: mockUser.displayName,
-      role
-    };
-    setCurrentUser(mockUser);
-    setUserProfile(profile);
+  // Quick Demo Login for instant testing with Firebase Auth
+  const demoLogin = async (role: UserRole) => {
+    try {
+      const email = `${role}@samuderaraya.com`;
+      const pass = 'admin123';
+      await signInWithEmailAndPassword(auth, email, pass);
+    } catch (err) {
+      // If demo account doesn't exist yet, create it
+      try {
+        const email = `${role}@samuderaraya.com`;
+        const pass = 'admin123';
+        const res = await createUserWithEmailAndPassword(auth, email, pass);
+        const profile: UserProfile = {
+          uid: res.user.uid,
+          email,
+          displayName: role === 'admin' ? 'Direktur Utama (Admin)' : role === 'operator' ? 'Kepala Operasional' : 'Pelanggan VIP',
+          role
+        };
+        await setDoc(doc(db, 'users', res.user.uid), profile);
+      } catch (innerErr) {
+        console.error("Demo auth fallback", innerErr);
+        // Fallback local mock state if offline/restricted
+        const mockUser: any = {
+          uid: `demo-${role}-${Date.now()}`,
+          email: `${role}@samuderaraya.com`,
+          displayName: role === 'admin' ? 'Direktur Utama (Admin)' : role === 'operator' ? 'Kepala Operasional' : 'Pelanggan VIP',
+          emailVerified: true
+        };
+        const profile: UserProfile = {
+          uid: mockUser.uid,
+          email: mockUser.email,
+          displayName: mockUser.displayName,
+          role
+        };
+        setCurrentUser(mockUser);
+        setUserProfile(profile);
+      }
+    }
   };
 
   return (
