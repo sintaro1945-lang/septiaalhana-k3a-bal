@@ -1,0 +1,6 @@
+{
+  "name": "Nusantara Maritime Logistics",
+  "description": "Enterprise Sea Freight Transportation Business & Fleet Management System",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

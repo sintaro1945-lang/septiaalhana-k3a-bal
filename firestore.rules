@@ -1,0 +1,114 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Global safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidVessel(data) {
+      return data.keys().hasAll(['id', 'name', 'type', 'status']) &&
+        data.id is string && data.id.size() <= 128 &&
+        data.name is string && data.name.size() <= 100 &&
+        data.type is string && data.type.size() <= 50 &&
+        data.status is string && data.status.size() <= 50;
+    }
+
+    function isValidRoute(data) {
+      return data.keys().hasAll(['id', 'name', 'originPort', 'destinationPort']) &&
+        data.id is string && data.id.size() <= 128 &&
+        data.name is string && data.name.size() <= 100 &&
+        data.originPort is string && data.originPort.size() <= 100 &&
+        data.destinationPort is string && data.destinationPort.size() <= 100;
+    }
+
+    function isValidShipment(data) {
+      return data.keys().hasAll(['id', 'trackingNo', 'customerName', 'status']) &&
+        data.id is string && data.id.size() <= 128 &&
+        data.trackingNo is string && data.trackingNo.size() <= 50 &&
+        data.customerName is string && data.customerName.size() <= 100 &&
+        data.status is string && data.status.size() <= 50;
+    }
+
+    function isValidVoyage(data) {
+      return data.keys().hasAll(['id', 'vesselName', 'routeName', 'etd']) &&
+        data.id is string && data.id.size() <= 128 &&
+        data.vesselName is string && data.vesselName.size() <= 100 &&
+        data.routeName is string && data.routeName.size() <= 100 &&
+        data.etd is string && data.etd.size() <= 50;
+    }
+
+    function isValidMaintenance(data) {
+      return data.keys().hasAll(['id', 'vesselName', 'activity', 'date']) &&
+        data.id is string && data.id.size() <= 128 &&
+        data.vesselName is string && data.vesselName.size() <= 100 &&
+        data.activity is string && data.activity.size() <= 200 &&
+        data.date is string && data.date.size() <= 50;
+    }
+
+    function isValidNotification(data) {
+      return data.keys().hasAll(['id', 'title', 'message', 'timestamp']) &&
+        data.id is string && data.id.size() <= 128 &&
+        data.title is string && data.title.size() <= 100 &&
+        data.message is string && data.message.size() <= 500 &&
+        data.timestamp is string && data.timestamp.size() <= 50;
+    }
+
+    // Vessels
+    match /vessels/{vesselId} {
+      allow list, get: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(vesselId) && isValidVessel(request.resource.data);
+      allow update: if isSignedIn() && isValidVessel(request.resource.data);
+      allow delete: if isSignedIn();
+    }
+
+    // Routes
+    match /routes/{routeId} {
+      allow list, get: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(routeId) && isValidRoute(request.resource.data);
+      allow update: if isSignedIn() && isValidRoute(request.resource.data);
+      allow delete: if isSignedIn();
+    }
+
+    // Shipments
+    match /shipments/{shipmentId} {
+      allow list, get: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(shipmentId) && isValidShipment(request.resource.data);
+      allow update: if isSignedIn() && isValidShipment(request.resource.data);
+      allow delete: if isSignedIn();
+    }
+
+    // Voyages
+    match /voyages/{voyageId} {
+      allow list, get: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(voyageId) && isValidVoyage(request.resource.data);
+      allow update: if isSignedIn() && isValidVoyage(request.resource.data);
+      allow delete: if isSignedIn();
+    }
+
+    // Maintenance
+    match /maintenance/{maintenanceId} {
+      allow list, get: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(maintenanceId) && isValidMaintenance(request.resource.data);
+      allow update: if isSignedIn() && isValidMaintenance(request.resource.data);
+      allow delete: if isSignedIn();
+    }
+
+    // Notifications
+    match /notifications/{notificationId} {
+      allow list, get: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(notificationId) && isValidNotification(request.resource.data);
+      allow update: if isSignedIn() && isValidNotification(request.resource.data);
+      allow delete: if isSignedIn();
+    }
+  }
+}

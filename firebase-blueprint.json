@@ -1,0 +1,130 @@
+{
+  "entities": {
+    "vessel": {
+      "title": "Vessel",
+      "description": "Maritime vessels / ships in the fleet",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "type": { "type": "string" },
+        "capacityTEU": { "type": "number" },
+        "yearBuilt": { "type": "number" },
+        "status": { "type": "string" },
+        "captain": { "type": "string" },
+        "speedKnots": { "type": "number" },
+        "fuelLevelPercent": { "type": "number" },
+        "latitude": { "type": "number" },
+        "longitude": { "type": "number" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "name", "type", "status"]
+    },
+    "route": {
+      "title": "Route",
+      "description": "Shipping routes between ports",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "originPort": { "type": "string" },
+        "destinationPort": { "type": "string" },
+        "estimatedDays": { "type": "number" },
+        "baseTariffIDR": { "type": "number" }
+      },
+      "required": ["id", "name", "originPort", "destinationPort"]
+    },
+    "shipment": {
+      "title": "Shipment",
+      "description": "Cargo shipment bookings",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "trackingNo": { "type": "string" },
+        "customerName": { "type": "string" },
+        "routeName": { "type": "string" },
+        "vesselName": { "type": "string" },
+        "cargoType": { "type": "string" },
+        "weightTon": { "type": "number" },
+        "status": { "type": "string" },
+        "departureDate": { "type": "string" },
+        "estimatedArrival": { "type": "string" },
+        "costIDR": { "type": "number" },
+        "history": { "type": "array" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "trackingNo", "customerName", "status"]
+    },
+    "voyage": {
+      "title": "Voyage",
+      "description": "Scheduled voyage trips",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "vesselName": { "type": "string" },
+        "routeName": { "type": "string" },
+        "etd": { "type": "string" },
+        "eta": { "type": "string" },
+        "status": { "type": "string" },
+        "occupiedTEU": { "type": "number" }
+      },
+      "required": ["id", "vesselName", "routeName", "etd"]
+    },
+    "maintenance": {
+      "title": "Maintenance",
+      "description": "Vessel maintenance and fuel log records",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "vesselName": { "type": "string" },
+        "activity": { "type": "string" },
+        "type": { "type": "string" },
+        "costIDR": { "type": "number" },
+        "fuelBunkerTon": { "type": "number" },
+        "date": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "vesselName", "activity", "date"]
+    },
+    "notification": {
+      "title": "Notification",
+      "description": "Automated system notifications and alerts",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "timestamp": { "type": "string" },
+        "type": { "type": "string" },
+        "read": { "type": "boolean" }
+      },
+      "required": ["id", "title", "message", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/vessels/{vesselId}": {
+      "schema": "vessel",
+      "description": "Maritime vessels fleet"
+    },
+    "/routes/{routeId}": {
+      "schema": "route",
+      "description": "Shipping routes"
+    },
+    "/shipments/{shipmentId}": {
+      "schema": "shipment",
+      "description": "Shipment bookings and tracking"
+    },
+    "/voyages/{voyageId}": {
+      "schema": "voyage",
+      "description": "Voyage schedules"
+    },
+    "/maintenance/{maintenanceId}": {
+      "schema": "maintenance",
+      "description": "Maintenance and fuel logs"
+    },
+    "/notifications/{notificationId}": {
+      "schema": "notification",
+      "description": "System alerts and notifications"
+    }
+  }
+}
